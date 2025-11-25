@@ -35,12 +35,12 @@ class ChatService:
                 "content": f"Context:\n{context}\n\nQuestion: {question}",
             },
         ]
-        completion = self.client.responses.create(
+        completion = self.client.chat.completions.create(
             model=settings.chat_model,
-            input=messages,
-            max_output_tokens=600,
+            messages=messages,
+            max_tokens=600,
         )
-        answer = completion.output_text.strip()
+        answer = completion.choices[0].message.content.strip()
         sources = [chunk.chunk_id for chunk in top_chunks]
         return answer, sources
 
