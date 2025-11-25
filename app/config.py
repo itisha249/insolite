@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 class Settings(BaseModel):
     openai_api_key: str = Field(default_factory=lambda: os.environ.get("OPENAI_API_KEY", ""))
     embeddings_model: str = "text-embedding-3-large"
-    chat_model: str = "gpt-4.1"
+    chat_model: str = "gpt-4o-mini"
     max_chunk_chars: int = 900
     chunk_overlap: int = 120
     storage_dir: Path = Field(default_factory=lambda: Path("storage") / "vector_store")
