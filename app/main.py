@@ -44,13 +44,29 @@ async def chat(payload: ChatRequest) -> ChatResponse:
 
 @app.post("/ingest")
 async def reingest(payload: IngestRequest) -> dict:
-    text = payload.text
-    if not text:
-        source_path = settings.default_source
-        if payload.source_path:
-            source_path = source_path.parent / payload.source_path
-        text = ingest.read_source(source_path)
-    count = ingest.ingest_text(text)
-    vector_store.load()
-    return {"chunks": count}
+    try:
+        text = payload.text
+        if not text:
+            source_path = settings.default_source
+            if payload.source_path:
+                source_path = source_path.parent / payload.source_path
+            if not source_path.exists():
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Source file not found: {source_path}. Make sure data.txt is in the repository."
+                )
+            text = ingest.read_source(source_path)
+        count = ingest.ingest_text(text)
+        vector_store.load()
+        return {"chunks": count}
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail=f"File not found: {exc}. Make sure data.txt is committed to the repository."
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error during ingestion: {str(exc)}"
+        ) from exc
 
