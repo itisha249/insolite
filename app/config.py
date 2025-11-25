@@ -13,7 +13,7 @@ class Settings(BaseModel):
     max_chunk_chars: int = 900
     chunk_overlap: int = 120
     storage_dir: Path = Field(default_factory=lambda: Path("storage") / "vector_store")
-    default_source: Path = Field(default_factory=lambda: Path(".history") / "data.txt")
+    default_source: Path = Field(default_factory=lambda: Path("data.txt"))
 
     def ensure_storage(self) -> None:
         self.storage_dir.mkdir(parents=True, exist_ok=True)
