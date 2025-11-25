@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from app import ingest
 from app.chat_service import ChatService
@@ -7,6 +8,14 @@ from app.schemas import ChatRequest, ChatResponse, IngestRequest
 from app.vector_store import VectorStore
 
 app = FastAPI(title="CHEMBULLS Chatbot", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 vector_store = VectorStore(settings.storage_dir)
 chat_service: ChatService | None = None
 
